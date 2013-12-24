@@ -1,0 +1,36 @@
+{
+  "name": "lazy-js",
+  "version": "0.0.1",
+  "description": "Lazy instruments for functions",
+  "main": "src/lazy.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/karma start",
+    "test-bin": "./node_modules/.bin/karma start karma-bin.conf.js",
+    "build": "O='bin/lazy.min.js';mkdir bin;./node_modules/.bin/uglifyjs -mt -o $O src/lazy.js && echo 'Build finished: '$O"
+  },
+  "keywords": [
+    "function",
+    "prototype",
+    "lazy"
+  ],
+  "author": "Bacher <bacherko@gmail.com>",
+  "license": "none",
+  "dependencies": {
+    "uglify-js": "~2.4.8"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.9",
+    "karma": "~0.10.8",
+    "karma-jasmine": "~0.1.5",
+    "karma-requirejs": "~0.2.1",
+    "karma-coffee-preprocessor": "~0.1.1",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.1",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.2",
+    "karma-firefox-launcher": "~0.1.2"
+  }
+}
