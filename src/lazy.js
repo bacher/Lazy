@@ -107,6 +107,58 @@
         return delay;
     };
 
+    /**
+     * Создает функцию, которая выполняется с отсрочкой timeout ms после последнего вызова.
+     * @param {number} timeout отсрочки
+     * @param {Object} [context] контекст для функции (по аналогии с bind)
+     * @return {Function} функция с отскоком
+     */
+    var bouncedFunc = function(timeout, context) {
+        var wait = false;
+        var isStopped = false;
+        var timeoutId;
+        var args;
+        var runContext = context;
+        var runId = 0;
+        var bounce = function() {
+            runContext = context || this;
+            args = arguments;
+
+            if (isStopped) {
+                bounce.originalFunc.apply(context || this, arguments);
+            } else {
+                wait = true;
+                var currentId = ++runId;
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(function() {
+                    if (runId === currentId) {
+                        wait = false;
+                        bounce.originalFunc.apply(runContext, args);
+                    }
+                }, timeout);
+            }
+        };
+        bounce.originalFunc = this;
+        bounce.bindContext = context;
+        bounce.toggle = function(enable, wakeup) {
+            if (arguments.length && enable || isStopped) {
+                wait = false;
+                isStopped = false;
+            } else {
+                clearTimeout(timeoutId);
+                if (wakeup && wait) {
+                    wait = false;
+                    bounce.originalFunc.apply(runContext, args);
+                }
+                isStopped = true;
+            }
+        };
+        bounce.immediate = immediate;
+        bounce.resume = resume;
+        bounce.stop = stop;
+        return bounce;
+    };
+
 
     /**
      * Моментальное выполнение
@@ -137,5 +189,6 @@
      */
     Function.prototype.lazy = lazyFunc;
     Function.prototype.delayed = delayedFunc;
+    Function.prototype.bounced = bouncedFunc;
 
 })();
