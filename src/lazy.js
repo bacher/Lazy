@@ -187,8 +187,29 @@
     /**
      * Расширение прототипа
      */
-    Function.prototype.lazy = lazyFunc;
-    Function.prototype.delayed = delayedFunc;
-    Function.prototype.bounced = bouncedFunc;
+    var fn = Function.prototype;
+    if (typeof Object.defineProperties === 'function') {
+        Object.defineProperties(fn, {
+            lazy: {
+                value: lazyFunc,
+                configurable: true,
+                writable: true
+            },
+            delayed: {
+                value: delayedFunc,
+                configurable: true,
+                writable: true
+            },
+            bounced: {
+                value: bouncedFunc,
+                configurable: true,
+                writable: true
+            }
+        });
+    } else {
+        fn.lazy = lazyFunc;
+        fn.delayed = delayedFunc;
+        fn.bounced = bouncedFunc;
+    }
 
 })();
