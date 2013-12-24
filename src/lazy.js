@@ -16,6 +16,7 @@
         var args;
         var runContext = context;
         var lazy = function() {
+            // TODO: подумать о wait
             if (!firstArgs || !wait) {
                 runContext = context || this;
                 args = arguments;
@@ -54,6 +55,60 @@
     };
 
     /**
+     * Создает функцию, которая выполняется с отсрочкой timeout ms.
+     * @param {number} timeout отсрочки
+     * @param {Object} [context] контекст для функции (по аналогии с bind)
+     * @return {Function} отсроченный аналог функции
+     */
+    var delayedFunc = function(timeout, context) {
+        var isStopped = false;
+        var queue = [];
+
+        var delay = function() {
+            if (isStopped) {
+                delay.originalFunc.apply(context || this, arguments);
+            } else {
+                queue.push({
+                    timeoutId: setTimeout(handle, timeout),
+                    context: context || this,
+                    args: arguments
+                });
+                delay.queueLength = queue.length;
+            }
+        };
+        delay.originalFunc = this;
+        delay.bindContext = context;
+
+        function handle() {
+            var task = queue.shift();
+            delay.queueLength = queue.length;
+            delay.originalFunc.apply(task.context, task.args);
+        }
+
+        delay.toggle = function(enable, wakeup) {
+            if (arguments.length && enable || isStopped) {
+                isStopped = false;
+            } else {
+                for (var i = 0, len = queue.length; i < len; ++i) {
+                    var task = queue[i];
+                    clearTimeout(task.timeoutId);
+                    if (wakeup && (wakeup === 'all' || i === len - 1 )) {
+                        delay.originalFunc.apply(task.context, task.args);
+                    }
+                }
+                queue = [];
+                isStopped = true;
+            }
+        };
+        delay.immediate = immediate;
+        delay.resume = resume;
+        delay.stop = stop;
+        delay.queueLength = 0;
+        return delay;
+    };
+
+
+    /**
      * Моментальное выполнение
      * @param context
      */
@@ -81,5 +136,6 @@
      * Расширение прототипа
      */
     Function.prototype.lazy = lazyFunc;
+    Function.prototype.delayed = delayedFunc;
 
 })();
