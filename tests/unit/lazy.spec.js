@@ -137,11 +137,11 @@ describe('Функция "lazy":', function() {
         expect(this.original.callCount).toBe(1);
     });
 
-    describe('функция "stop"', function() {
+    describe('функция "reset"', function() {
 
         it('предотвращает вызов', function() {
             this.lazyFunc();
-            this.lazyFunc.stop();
+            this.lazyFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -152,7 +152,7 @@ describe('Функция "lazy":', function() {
             this.lazyFunc();
 
             jasmine.Clock.tick(50);
-            this.lazyFunc.stop();
+            this.lazyFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -161,7 +161,7 @@ describe('Функция "lazy":', function() {
 
         it('вызывает оригинальную функцию при параметре "wakeup"', function() {
             this.lazyFunc();
-            this.lazyFunc.stop(true);
+            this.lazyFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -170,7 +170,7 @@ describe('Функция "lazy":', function() {
             this.lazyFunc();
 
             jasmine.Clock.tick(50);
-            this.lazyFunc.stop(true);
+            this.lazyFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -179,9 +179,11 @@ describe('Функция "lazy":', function() {
             this.lazyFunc();
 
             jasmine.Clock.tick(200);
+
+            // this .reset from Jasmine.spy
             this.original.reset();
 
-            this.lazyFunc.stop(true);
+            this.lazyFunc.reset(true);
 
             expect(this.original).not.toHaveBeenCalled();
         });
@@ -199,33 +201,9 @@ describe('Функция "lazy":', function() {
             obj.lazy = obj.original.lazy(100, bindObj);
             obj.lazy();
 
-            obj.lazy.stop(true);
+            obj.lazy.reset(true);
 
             expect(obj.original.mostRecentCall.object).toBe(bindObj);
-        });
-    });
-
-    describe('функция "resume"', function() {
-
-        it('возобновляет отложенные вызовы', function() {
-            this.lazyFunc();
-            this.lazyFunc();
-
-            jasmine.Clock.tick(10);
-            this.lazyFunc.stop();
-
-            jasmine.Clock.tick(1000);
-            expect(this.original).not.toHaveBeenCalled();
-
-            this.lazyFunc.resume();
-
-            this.lazyFunc();
-            this.lazyFunc();
-
-            expect(this.original).not.toHaveBeenCalled();
-
-            jasmine.Clock.tick(200);
-            expect(this.original).toHaveBeenCalled();
         });
     });
 });

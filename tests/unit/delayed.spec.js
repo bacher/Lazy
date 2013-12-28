@@ -94,11 +94,11 @@ describe('Функция "delayed":', function() {
         expect(original.mostRecentCall.object).toBe(bindObj);
     });
 
-    describe('stop функция', function() {
+    describe('reset функция', function() {
 
         it('предотвращает вызов', function() {
             this.delayedFunc();
-            this.delayedFunc.stop();
+            this.delayedFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -109,7 +109,7 @@ describe('Функция "delayed":', function() {
             this.delayedFunc();
 
             jasmine.Clock.tick(50);
-            this.delayedFunc.stop();
+            this.delayedFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -122,7 +122,7 @@ describe('Функция "delayed":', function() {
                 jasmine.Clock.tick(20);
             }
 
-            this.delayedFunc.stop();
+            this.delayedFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -131,7 +131,7 @@ describe('Функция "delayed":', function() {
 
         it('вызывает оригинальную функцию при параметре "wakeup"', function() {
             this.delayedFunc();
-            this.delayedFunc.stop(true);
+            this.delayedFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -140,7 +140,7 @@ describe('Функция "delayed":', function() {
             this.delayedFunc();
 
             jasmine.Clock.tick(50);
-            this.delayedFunc.stop(true);
+            this.delayedFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -151,7 +151,7 @@ describe('Функция "delayed":', function() {
                 jasmine.Clock.tick(20);
             }
             this.delayedFunc('final');
-            this.delayedFunc.stop(true);
+            this.delayedFunc.reset(true);
 
             expect(this.original).toHaveBeenCalledWith('final');
             expect(this.original.callCount).toBe(1);
@@ -163,7 +163,7 @@ describe('Функция "delayed":', function() {
                 this.delayedFunc(i);
                 jasmine.Clock.tick(20);
             }
-            this.delayedFunc.stop('all');
+            this.delayedFunc.reset('all');
 
             for (i = 0; i < 3; ++i) {
                 expect(this.original.calls[i].args[0]).toBe(i);
@@ -177,9 +177,11 @@ describe('Функция "delayed":', function() {
                 this.delayedFunc(i);
                 jasmine.Clock.tick(20);
             }
-            this.delayedFunc.stop(true);
+            this.delayedFunc.reset(true);
 
+            // This .reset from Jasmine.spy
             this.original.reset();
+
             jasmine.Clock.tick(1000);
             expect(this.original).not.toHaveBeenCalled();
         });
@@ -189,33 +191,10 @@ describe('Функция "delayed":', function() {
 
             jasmine.Clock.tick(200);
             this.original.reset();
-            this.delayedFunc.stop(true);
+
+            this.delayedFunc.reset(true);
 
             expect(this.original).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('функция "resume"', function() {
-
-        it('возобновляет отложенные вызовы', function() {
-            this.delayedFunc();
-            this.delayedFunc();
-
-            jasmine.Clock.tick(10);
-            this.delayedFunc.stop();
-
-            jasmine.Clock.tick(1000);
-            expect(this.original).not.toHaveBeenCalled();
-
-            this.delayedFunc.resume();
-
-            this.delayedFunc();
-            this.delayedFunc();
-
-            expect(this.original).not.toHaveBeenCalled();
-
-            jasmine.Clock.tick(200);
-            expect(this.original).toHaveBeenCalled();
         });
     });
 });

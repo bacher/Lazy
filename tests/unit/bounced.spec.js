@@ -108,11 +108,11 @@ describe('Функция "bounced":', function() {
         expect(obj.original.mostRecentCall.object).toBe(bindObj);
     });
 
-    describe('функция "stop"', function() {
+    describe('функция "reset"', function() {
 
         it('предотвращает вызов', function() {
             this.bouncedFunc();
-            this.bouncedFunc.stop();
+            this.bouncedFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -123,7 +123,7 @@ describe('Функция "bounced":', function() {
             this.bouncedFunc();
 
             jasmine.Clock.tick(50);
-            this.bouncedFunc.stop();
+            this.bouncedFunc.reset();
 
             jasmine.Clock.tick(1000);
 
@@ -132,7 +132,7 @@ describe('Функция "bounced":', function() {
 
         it('вызывает оригинальную функцию при параметре "wakeup"', function() {
             this.bouncedFunc();
-            this.bouncedFunc.stop(true);
+            this.bouncedFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -141,7 +141,7 @@ describe('Функция "bounced":', function() {
             this.bouncedFunc();
 
             jasmine.Clock.tick(50);
-            this.bouncedFunc.stop(true);
+            this.bouncedFunc.reset(true);
 
             expect(this.original).toHaveBeenCalled();
         });
@@ -150,9 +150,11 @@ describe('Функция "bounced":', function() {
             this.bouncedFunc();
 
             jasmine.Clock.tick(200);
+
+            // This .reset from Jasmine.spy
             this.original.reset();
 
-            this.bouncedFunc.stop(true);
+            this.bouncedFunc.reset(true);
 
             expect(this.original).not.toHaveBeenCalled();
         });
@@ -170,33 +172,9 @@ describe('Функция "bounced":', function() {
             obj.bouncedFunc = obj.original.lazy(100, bindObj);
             obj.bouncedFunc();
 
-            obj.bouncedFunc.stop(true);
+            obj.bouncedFunc.reset(true);
 
             expect(obj.original.mostRecentCall.object).toBe(bindObj);
-        });
-    });
-
-    describe('функция "resume"', function() {
-
-        it('возобновляет отложенные вызовы', function() {
-            this.bouncedFunc();
-            this.bouncedFunc();
-
-            jasmine.Clock.tick(10);
-            this.bouncedFunc.stop();
-
-            jasmine.Clock.tick(1000);
-            expect(this.original).not.toHaveBeenCalled();
-
-            this.bouncedFunc.resume();
-
-            this.bouncedFunc();
-            this.bouncedFunc();
-
-            expect(this.original).not.toHaveBeenCalled();
-
-            jasmine.Clock.tick(200);
-            expect(this.original).toHaveBeenCalled();
         });
     });
 });
