@@ -122,6 +122,21 @@ describe('Функция "lazy":', function() {
         expect(original.mostRecentCall.object).toBe(bindObj);
     });
 
+    it('правильно срабатывает в случае с таймаутом 0', function() {
+        this.lazyFunc = this.original.lazy(0);
+
+        this.lazyFunc();
+        this.lazyFunc();
+        this.lazyFunc();
+
+        expect(this.original).not.toHaveBeenCalled();
+
+        // Jump to next tick
+        jasmine.Clock.tick(0);
+
+        expect(this.original.callCount).toBe(1);
+    });
+
     describe('функция "stop"', function() {
 
         it('предотвращает вызов', function() {

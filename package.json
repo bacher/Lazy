@@ -35,6 +35,6 @@
   "scripts": {
     "test": "./node_modules/.bin/karma start",
     "test-bin": "./node_modules/.bin/karma start karma-bin.conf.js",
-    "build": "npm install;O='bin/lazy.min.js';mkdir bin;./node_modules/.bin/uglifyjs -mt -o $O src/lazy.js && echo 'Build finished: '$O"
+    "build": "npm install;O='bin/lazy.min.js';[ -d bin ] mkdir bin;./node_modules/.bin/uglifyjs -mt -o $O src/lazy.js && echo 'Build finished: '$O"
   }
 }
