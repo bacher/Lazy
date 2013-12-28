@@ -1,6 +1,6 @@
 {
   "name": "lazy-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lazy instruments for functions",
   "main": "src/lazy.js",
   "directories": {
